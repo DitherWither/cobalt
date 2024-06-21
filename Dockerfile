@@ -8,15 +8,20 @@ RUN dnf update -y
 ENV SYSROOT="/sysroot"
 ENV LC_ALL=POSIX
 ENV LFS_TGT=x86_64-lfs-linux-gnu
-ENV PATH=/tools/bin:/bin:/usr/bin:/sbin:/usr/sbin
+ENV PATH=/llvmtools/bin:/bin:/usr/bin:/sbin:/usr/sbin
 ENV CC=clang
+ENV TARGET_TUPLE=x86_64-pc-linux-musl
+ENV COBALT_TUPLE=x86_64-cobalt-linux-musl
 ENV CXX=clang++
 ENV MAKEFLAGS="-j8"
 ENV CFLAGS="-O2 -pipe"
 
+COPY builder /builder
+RUN /builder/build.sh
+RUN rm -rf /builder
+
 COPY stage0 /stage0
 RUN /stage0/build.sh
-RUN rm -rf /stage0
 
 COPY . /src
 WORKDIR /src
